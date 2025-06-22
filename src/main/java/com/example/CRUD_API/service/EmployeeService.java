@@ -9,5 +9,5 @@ public interface EmployeeService {
     List<Employee> findAll();
     Employee findById(int empId);
     Employee save(Employee employee);
-    Employee deleteById(int empId);
+    void deleteById(int empId);
 }

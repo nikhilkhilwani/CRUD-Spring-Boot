@@ -95,11 +95,8 @@ public class FunRestController {
     @DeleteMapping("/employees/{empId}")
     public String deleteById(@PathVariable int empId)
     {
-        Employee employee = employeeService.deleteById(empId);
-        if(employee == null)
-            throw new CustomException("Employee ID not Found: " + empId);
-        else
-            return "Deleted Employee with Employee ID: " + empId;
+        employeeService.deleteById(empId);
+        return "Employee Deleted. Employee ID: " + empId;
     }
 
 }

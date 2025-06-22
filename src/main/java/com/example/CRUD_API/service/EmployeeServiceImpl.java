@@ -1,46 +1,59 @@
 package com.example.CRUD_API.service;
 
-import com.example.CRUD_API.dao.EmployeeDAO;
+import com.example.CRUD_API.dao.EmployeeRepository;
 import com.example.CRUD_API.entity.Employee;
+import com.example.CRUD_API.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
 
-    private EmployeeDAO employeeDAO;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeDAO employeeDAO)
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository)
     {
-        this.employeeDAO = employeeDAO;
+        this.employeeRepository = employeeRepository;
     }
 
 
     @Override
     public List<Employee> findAll() {
-        return employeeDAO.findAll();
+        return employeeRepository.findAll();
     }
 
     @Override
     public Employee findById(int empId) {
-        return employeeDAO.findById(empId);
+
+        Optional<Employee> result = employeeRepository.findById(empId);
+        Employee employee = null;
+        if(result.isPresent())
+            employee = result.get();
+        else
+            throw new CustomException("Employee ID not Found: " + empId);
+        return employee;
     }
 
     @Override
-    @Transactional
     public Employee save(Employee employee)
     {
-        return employeeDAO.save(employee);
+        return employeeRepository.save(employee);
     }
 
     @Override
-    @Transactional
-    public Employee deleteById(int empId)
+    public void deleteById(int empId)
     {
-        return employeeDAO.deleteById(empId);
+        Optional<Employee> employee = employeeRepository.findById(empId);
+        if (employee.isEmpty()) {
+            throw new CustomException("Employee ID not Found: " + empId);
+        }
+        else
+        {
+            employeeRepository.deleteById(empId);
+        }
     }
 }
